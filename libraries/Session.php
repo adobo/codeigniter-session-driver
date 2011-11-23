@@ -101,7 +101,7 @@ class Session extends CI_Driver_Library {
 		}
 		else
 		{
-			$this->sess_update();
+			$this->sess_conditional_update();
 		}
 
 		// Delete 'old' flashdata (from last request)
@@ -115,6 +115,22 @@ class Session extends CI_Driver_Library {
 
 		log_message('debug', "Session routines successfully run");
 	}
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Calls sess_update on driver unless we are in the middle of an AJAX
+	 * request
+	 *
+	 * @access public
+	 */
+	 public function sess_conditional_update()
+		 if ($this->CI->input->is_ajax_request()) {
+			 // Just update last_activity to avoid session expiring
+			 $this->userdata['last_activity'] = $this->now;
+		 } else {
+			 $this->sess_update();
+		 }
+	 }
 
 	// ------------------------------------------------------------------------
 
